@@ -1,0 +1,13 @@
+!!!
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+    script(src='/socket.io/socket.io.js')
+    script(type='text/javascript')
+      var socket = io.connect('http://localhost:3001')
+      socket.on('record-processed', function (data) {
+        $('<div>'+data['msg']+'</div>').prependTo('#messages')
+      })
+  body!= body
