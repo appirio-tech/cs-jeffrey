@@ -9,4 +9,5 @@ id associated with the task and writes that back into the CloudSpokes challenge 
 that it can be used for payment processing.
 
 ## Contributors
-Jeff Douglas
+
+* Jeff Douglas -> [jeffdonthemic](https://github.com/jeffdonthemic)
