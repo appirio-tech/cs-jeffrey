@@ -179,7 +179,7 @@ getCloudSpokesOAuthToken(function(oauth) {
   var upstreamSub = client.subscribe(config.PUSH_TOPIC, function(message) {
     // new inserted/updated record receeived -- do something with it
     if(config.DEBUG) console.log("Received upstream message: " + JSON.stringify(message)); 
-    updateCmcOrg(message); 
+    // updateCmcOrg(message); 
     updateCloudSpokesOrg(message);
   });
 
