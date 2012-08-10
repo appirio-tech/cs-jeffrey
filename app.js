@@ -129,7 +129,6 @@ function getCmcProjectNumber(challenge, callback) {
           callback(projectId);
         } catch (e) {
           socket.emit('record-processed', { msg: 'Could not find a ProjectId for task '+ challenge['sobject']['CMC_Task__c'] + ' for challenge ' + challenge['sobject']['Id'] }); 
-          console.log('Could not find a ProjectId for task '+ challenge['sobject']['CMC_Task__c'] + ' for challenge ' + challenge['sobject']['Id']);
         }
       });
     }
@@ -180,7 +179,7 @@ getCloudSpokesOAuthToken(function(oauth) {
   var upstreamSub = client.subscribe(config.PUSH_TOPIC, function(message) {
     // new inserted/updated record receeived -- do something with it
     if(config.DEBUG) console.log("Received upstream message: " + JSON.stringify(message)); 
-    // updateCmcOrg(message); 
+    updateCmcOrg(message); 
     updateCloudSpokesOrg(message);
   });
 
