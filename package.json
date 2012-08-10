@@ -5,5 +5,8 @@
   , "dependencies": {
       "express": "2.5.11"
     , "jade": ">= 0.0.1"
+    , "socket.io": "*"
+    , "nforce" : "*"
+    , "faye" : "*"    
   }
 }
