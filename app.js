@@ -128,7 +128,8 @@ function getCmcProjectNumber(challenge, callback) {
           if(config.DEBUG) console.log('Found projectId: '+projectId);
           callback(projectId);
         } catch (e) {
-          console.log('Could not find a ProjectId for task '+ challenge['sobject']['CMC_Task__c']);
+          socket.emit('record-processed', { msg: 'Could not find a ProjectId for task '+ challenge['sobject']['CMC_Task__c'] + ' for challenge ' + challenge['sobject']['Id'] }); 
+          console.log('Could not find a ProjectId for task '+ challenge['sobject']['CMC_Task__c'] + ' for challenge ' + challenge['sobject']['Id']);
         }
       });
     }
