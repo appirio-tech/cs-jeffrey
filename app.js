@@ -66,8 +66,9 @@ function updateCmcOrg(challenge) {
 
   cmcOrg.authenticate({ username: config.CMC_USERNAME, password: config.CMC_PASSWORD }, function(err, resp){
     if(err) {
-      console.log('Error authenticating to CMC org: ' + err.message);
+      console.log('[ERROR]Error authenticating to Appirio Production Org: ' + err.message);
     } else {
+      console.log('[INFO]Successfully logged into the Appirio Production Org.');
       // update the cmc task with the status and submissions
       var obj = nforce.createSObject('CMC_Task__c', { 
           Id: challenge['sobject']['CMC_Task__c'], 
@@ -75,8 +76,9 @@ function updateCmcOrg(challenge) {
           CloudSpokes_Submission_Count__c: challenge['sobject']['Submissions__c']
         });
       cmcOrg.update(obj, resp, function(results) {
-        if(results) console.log(results);
-        if(err) console.log(err.message); 
+        console.log('[INFO]Updating CMC Task the Appirio Production Org...');
+        if(results) console.log('[INFO]' + results);
+        if(err) console.log('[FATAL]' + err.message); 
         // emit the message that the record has been updated
         socket.emit('record-processed', { msg: 'CMC Task ' + challenge['sobject']['CMC_Task__c'] + 
           ' updated with status of ' + challenge['sobject']['Status__c'] + ' and ' + 
@@ -94,7 +96,7 @@ function updateCloudSpokesOrg(challenge) {
   getCmcProjectNumber(challenge, function(projectId) {
     cloudSpokesOrg.authenticate({ username: config.CS_USERNAME, password: config.CS_PASSWORD }, function(err, resp){
       if(err) {
-        console.log('Error authenticating to CloudSpokes org: ' + err.message);
+        console.log('[FATAL]Error authenticating to CloudSpokes org: ' + err.message);
       } else {
         // update the challenge with the projectid
         var obj = nforce.createSObject('Challenge__c', { 
@@ -102,8 +104,9 @@ function updateCloudSpokesOrg(challenge) {
             Reference_Number__c: projectId
           });
         cloudSpokesOrg.update(obj, resp, function(results) {
-          if(results) console.log(results);
-          if(err) console.log(err.message); 
+          console.log('[INFO]Updating Challenge in CloudSpokes Org');
+          if(results) console.log('[INFO]' + results);
+          if(err) console.log('[FATAL]' + err.message); 
           socket.emit('record-processed', { msg: 'CloudSpokes challenge ' + 
             challenge['sobject']['Challenge__c'] + ' updated with Reference Nubmer ' + 
             projectId + '.' }); 
@@ -120,12 +123,14 @@ function getCmcProjectNumber(challenge, callback) {
 
   cmcOrg.authenticate({ username: config.CMC_USERNAME, password: config.CMC_PASSWORD }, function(err, resp){
     if(err) {
-      console.log('Error authenticating to CMC org: ' + err.message);
+      console.log('[FATAL]Error authenticating to Appirio Production Org: ' + err.message);
     } else {
+      console.log('[INFO]Successfully logged into the Appirio Production Org.');
       cmcOrg.query("select Id, Story__r.Sprint__r.Release__r.Project__r.pse__Project_ID__c from CMC_Task__c where id = '"+challenge['sobject']['CMC_Task__c']+"'", resp, function(err, resp){
+        console.log('[INFO]Querying the Appirio Production Org.');
         try {
           var projectId = resp.records[0]['Story__r']['Sprint__r']['Release__r']['Project__r']['pse__Project_ID__c'];  
-          if(config.DEBUG) console.log('Found projectId: '+projectId);
+          if(config.DEBUG) console.log('[INFO]Found projectId: '+projectId);
           callback(projectId);
         } catch (e) {
           socket.emit('record-processed', { msg: 'Could not find a ProjectId for task '+ challenge['sobject']['CMC_Task__c'] + ' for challenge ' + challenge['sobject']['Id'] }); 
@@ -139,13 +144,13 @@ function getCmcProjectNumber(challenge, callback) {
 // authenticates and returns OAuth -- used by faye
 function getCloudSpokesOAuthToken(callback) {
 
-  if(config.DEBUG) console.log("Authenticating to get salesforce.com access token...");
+  if(config.DEBUG) console.log("[INFO]Authenticating to get CloudSpoke salesforce.com access token...");
   
   cloudSpokesOrg.authenticate({ username: config.CS_USERNAME, password: config.CS_PASSWORD }, function(err, resp){
     if(err) {
-      console.log('Error authenticating to CloudSpokes org: ' + err.message);
+      console.log('[ERROR]Error authenticating to CloudSpokes org: ' + err.message);
     } else {
-      if(config.DEBUG) console.log('OAauth dance response: ' + util.inspect(resp));
+      if(config.DEBUG) console.log('[INFO]OAauth dance response: ' + util.inspect(resp));
       callback(resp);
     }
   });
@@ -157,7 +162,7 @@ getCloudSpokesOAuthToken(function(oauth) {
 
   // cometd endpoint
   var salesforce_endpoint = oauth.instance_url +'/cometd/24.0';
-  if(config.DEBUG) console.log("Creating a client for "+ salesforce_endpoint);
+  if(config.DEBUG) console.log("[INFO]Creating a client for "+ salesforce_endpoint);
 
   // add the client listening to salesforce.com
   var client = new faye.Client(salesforce_endpoint);
@@ -175,22 +180,22 @@ getCloudSpokesOAuthToken(function(oauth) {
   });
 
   // subscribe to salesforce.com push topic
-  if(config.DEBUG) console.log('Subscribing to '+ config.PUSH_TOPIC);
+  if(config.DEBUG) console.log('[INFO]Subscribing to '+ config.PUSH_TOPIC);
   var upstreamSub = client.subscribe(config.PUSH_TOPIC, function(message) {
     // new inserted/updated record receeived -- do something with it
-    if(config.DEBUG) console.log("Received upstream message: " + JSON.stringify(message)); 
+    if(config.DEBUG) console.log("[INFO]Received upstream message: " + JSON.stringify(message)); 
     updateCmcOrg(message); 
     updateCloudSpokesOrg(message);
   });
 
   // log that upstream subscription is active
   client.callback(function() {
-    if(config.DEBUG) console.log('Upstream subscription is now active');    
+    if(config.DEBUG) console.log('[INFO]Upstream subscription is now active');    
   });
 
   // log that upstream subscription encounters error
   client.errback(function(error) {
-    if(config.DEBUG) console.error("ERROR ON Upstream subscription Attempt: " + error.message);
+    if(config.DEBUG) console.error("[ERROR]ERROR ON Upstream subscription Attempt: " + error.message);
   });
 
   /**
