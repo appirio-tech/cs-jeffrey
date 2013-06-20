@@ -73,7 +73,8 @@ function updateCmcOrg(challenge) {
       var obj = nforce.createSObject('CMC_Task__c', { 
           Id: challenge['sobject']['CMC_Task__c'], 
           CloudSpokes_Task_Status__c: challenge['sobject']['Status__c'],
-          CloudSpokes_Submission_Count__c: challenge['sobject']['Submissions__c']
+          CloudSpokes_Submission_Count__c: challenge['sobject']['Submissions__c'],
+          CloudSpokes_Challenge_Name__c: challenge['sobject']['Name']
         });
       cmcOrg.update(obj, resp, function(results) {
         console.log('[INFO]Updating CMC Task the Appirio Production Org...');
