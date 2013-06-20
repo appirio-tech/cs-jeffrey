@@ -74,7 +74,9 @@ function updateCmcOrg(challenge) {
           Id: challenge['sobject']['CMC_Task__c'], 
           CloudSpokes_Task_Status__c: challenge['sobject']['Status__c'],
           CloudSpokes_Submission_Count__c: challenge['sobject']['Submissions__c'],
-          CloudSpokes_Challenge_Name__c: challenge['sobject']['Name']
+          CloudSpokes_Challenge_Name__c: challenge['sobject']['Challenge_Name__c'].
+          CloudSpokes_Challenge_Start_Date__c: challenge['sobject']['Challenge_Start_Date__c'].
+          CloudSpokes_Challenge_End_Date__c: challenge['sobject']['Challenge_End_Date__c']
         });
       cmcOrg.update(obj, resp, function(results) {
         console.log('[INFO]Updating CMC Task the Appirio Production Org...');
