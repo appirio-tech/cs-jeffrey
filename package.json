@@ -2,12 +2,12 @@
     "name": "cs-jeffrey"
   , "version": "0.0.1"
   , "engines": {
-    "node": "0.8.x",
-    "npm":  "1.1.x"
+    "node": "0.10.x",
+    "npm":  "1.2.x"
   }
   , "private": true
   , "dependencies": {
-      "express": "2.5.11"
+      "express": "*"
     , "jade": "*"
     , "socket.io": "*"
     , "nforce" : "*"
