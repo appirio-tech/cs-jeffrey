@@ -89,7 +89,8 @@ function updateCmcOrg(challenge) {
           CloudSpokes_Challenge_Name__c: challenge['sobject']['Challenge_Name__c'],
           CloudSpokes_Challenge_Start_Date__c: challenge['sobject']['Challenge_Start_Date__c'],
           CloudSpokes_Challenge_End_Date__c: challenge['sobject']['Challenge_End_Date__c'],
-          CloudSpokesContest__c: challenge['sobject']['Challenge_URL__c']
+          CloudSpokesContest__c: challenge['sobject']['Challenge_URL__c'],
+          CloudSpokesContestId__c: challenge['sobject']['Challenge_Id__c']
         });
       cmcOrg.update(obj, function(err, resp) {
         if (!err) console.log('[INFO]Task successfully updated!');
