@@ -40,8 +40,12 @@ csOrg.authenticate({ username: process.env.CS_USERNAME, password: process.env.CS
     });
 
     streamer.on('error', function(error) {
-      console.log('[FATAL]:Error with Stream from CS org: ' + error);
+      console.log('[FATAL]Error with Stream from CS org: ' + error);
     });    
+
+    streamer.on('disconnect', function() {
+      console.log('[FATAL]Disconnected from the CS org.');
+    });        
 
   } else {
     console.log('[FATAL]Error authenticating to CS org: ' + err.message);
