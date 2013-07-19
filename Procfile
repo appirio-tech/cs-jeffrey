@@ -1,1 +1,1 @@
-worker: bin/start
+worker: node app.js
